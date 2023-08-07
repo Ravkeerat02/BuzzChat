@@ -30,7 +30,7 @@ io.on("connection", (socket) => {
     // Welcome current user
     socket.emit(
       "message",
-      formatMessage(botName, `Welcome to room ${user.username}!`)
+      formatMessage(botName, `Welcome to ${user.room} room  ${user.username}!`)
     );
 
     // Broadcast when a user connects
