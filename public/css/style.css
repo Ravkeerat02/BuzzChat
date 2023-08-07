@@ -1,9 +1,9 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto&display=swap");
 
 :root {
-  --dark-color-a: #667aff;
-  --dark-color-b: #7386ff;
-  --light-color: #e6e9ff;
+  --dark-color-a: #22303c;
+  --dark-color-b: #22303c;
+  --light-color: #ffffff;
   --success-color: #5cb85c;
   --error-color: #d9534f;
 }
@@ -15,7 +15,7 @@
 }
 
 body {
-  font-family: "Roboto", sans-serif;
+  font-family: " Helvetica", sans-serif;
   font-size: 16px;
   background: var(--light-color);
   margin: 20px;
@@ -56,6 +56,17 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.msg {
+  color: #fff;
+  font-size: 20px;
+  font-weight: bold;
+  margin-right: 10px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  padding-right: 10px;
 }
 
 .chat-main {
@@ -178,6 +189,7 @@ a {
   width: 100%;
 }
 
+/* Responsive Styles for Small Screens */
 @media (max-width: 700px) {
   .chat-main {
     display: block;
@@ -185,5 +197,25 @@ a {
 
   .chat-sidebar {
     display: none;
+  }
+
+  .chat-header {
+    padding: 10px;
+  }
+
+  .msg {
+    font-size: 16px;
+    margin: 0 5px;
+  }
+
+  .chat-messages {
+    padding: 20px;
+    max-height: 400px;
+  }
+
+  .chat-messages .message {
+    padding: 5px;
+    margin-bottom: 10px;
+    font-size: 14px;
   }
 }
