@@ -19,6 +19,6 @@ BuzzChat is a dynamic web application under construction, envisioned to offer a 
 - Navigating BuzzChat is intuitive and user-friendly. Easily switch between rooms, send messages, and upload files with just a few clicks. The responsive design ensures a smooth experience across devices, making communication on the go a breeze.
 
 # Deployment:
-- Ready to experience the future of communication? Access BuzzChat now at [BuzzChat](https://buzz-chat-cyan.vercel.app/) . Explore its features and share your thoughts with us. 
+- Ready to experience the future of communication? Access BuzzChat now at [BuzzChat](https://buzz-chat-gamma.vercel.app/) . Explore its features and share your thoughts with us. 
 
 
