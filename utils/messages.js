@@ -1,12 +1,25 @@
 const moment = require("moment");
 
-// utils/messages.js
-function formatMessage(username, text) {
+function formatTextMessage(username, text) {
   return {
     username,
     text,
     time: moment().format("h:mm a"),
+    type: "text",
   };
 }
 
-module.exports = formatMessage;
+function formatFileMessage(username, file, filename) {
+  return {
+    username,
+    file,
+    filename,
+    time: moment().format("h:mm a"),
+    type: "file",
+  };
+}
+
+module.exports = {
+  formatTextMessage,
+  formatFileMessage,
+};

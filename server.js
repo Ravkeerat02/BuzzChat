@@ -3,7 +3,7 @@ const path = require("path");
 const http = require("http");
 const express = require("express");
 const socketio = require("socket.io");
-const formatMessage = require("./utils/messages");
+const { formatFileMessage, formatTextMessage } = require("./utils/messages");
 const {
   userJoin,
   getCurrentUsers,
@@ -30,7 +30,10 @@ io.on("connection", (socket) => {
     // Welcome current user
     socket.emit(
       "message",
-      formatMessage(botName, `Welcome to ${user.room} room  ${user.username}!`)
+      formatTextMessage(
+        botName,
+        `Welcome to ${user.room} room  ${user.username}!`
+      )
     );
 
     // Broadcast when a user connects
@@ -38,7 +41,7 @@ io.on("connection", (socket) => {
       .to(user.room)
       .emit(
         "message",
-        formatMessage(botName, `${user.username} has joined the chat`)
+        formatTextMessage(botName, `${user.username} has joined the chat`)
       );
 
     // Send users and room info
@@ -52,7 +55,16 @@ io.on("connection", (socket) => {
   socket.on("chatMessage", (msg) => {
     const user = getCurrentUsers(socket.id);
 
-    io.to(user.room).emit("message", formatMessage(user.username, msg));
+    if (user) {
+      if (msg.type === "file") {
+        io.to(user.room).emit(
+          "message",
+          formatFileMessage(user.username, msg.file, msg.filename)
+        );
+      } else {
+        io.to(user.room).emit("message", formatTextMessage(user.username, msg));
+      }
+    }
   });
 
   // Runs when client disconnects
@@ -62,7 +74,7 @@ io.on("connection", (socket) => {
     if (user) {
       io.to(user.room).emit(
         "message",
-        formatMessage(botName, `${user.username} has left the chat`)
+        formatTextMessage(botName, `${user.username} has left the chat`)
       );
 
       // Send users and room info

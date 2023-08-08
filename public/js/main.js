@@ -1,70 +1,101 @@
 const chatForm = document.getElementById("chat-form");
-const chatMessage = document.querySelector(".chat-messages");
+const chatMessages = document.querySelector(".chat-messages"); // Make sure this matches your HTML
 const roomName = document.getElementById("room-name");
 const userList = document.getElementById("user-list");
 
-//get user and room
 const { username, room } = Qs.parse(location.search, {
   ignoreQueryPrefix: true,
 });
 
 const socket = io();
 
-//join chatroom
 socket.emit("joinRoom", { username, room });
 
-//get room and users
 socket.on("roomUsers", ({ room, users }) => {
   outputRoomName(room);
   outputUsers(users);
 });
 
-//msg from server
-socket.on("message", (message) => {
-  console.log(message);
-  outputMessage(message);
-
-  //scroll to bottom
-  chatMessage.scrollTop = chatMessage.scrollHeight;
-});
-
-//Msg submit
-chatForm.addEventListener("submit", (e) => {
+// Msg submit
+chatForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  //get message
-  const msg = e.target.elements.msg.value;
+  const inputElement = e.target.elements.msg;
+  const isFileInput = inputElement.type === "file";
+  const msg = isFileInput ? inputElement.files[0] : inputElement.value;
 
-  //Send message to server
-  socket.emit("chatMessage", msg);
+  if (isFileInput) {
+    const file = inputElement.files[0];
+    const fileData = await readFileAsDataURL(file);
 
-  //clear input
-  e.target.elements.msg.value = "";
-  e.target.elements.msg.focus();
+    socket.emit("chatMessage", {
+      type: "file",
+      file: fileData,
+      filename: file.name,
+    });
+  } else {
+    socket.emit("chatMessage", msg);
+  }
+
+  inputElement.value = "";
+  inputElement.focus();
 });
 
-// Output message to DOM
-function outputMessage(message) {
-  const div = document.createElement("div");
-  div.classList.add("message");
-  const p = document.createElement("p");
-  p.classList.add("meta");
-  p.innerText = message.username;
-  p.innerHTML += `<span>${message.time}</span>`;
-  div.appendChild(p);
-  const para = document.createElement("p");
-  para.classList.add("text");
-  para.innerText = message.text;
-  div.appendChild(para);
-  document.querySelector(".chat-messages").appendChild(div);
+// Helper function to read file as Data URL
+function readFileAsDataURL(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      resolve(event.target.result);
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
-// Add room name to DOM
+socket.on("message", (message) => {
+  const isSender = message.username === username; // Compare with the current user's username
+  outputMessage(message, isSender);
+
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+});
+
+function outputMessage(message, isSender) {
+  const messageDiv = document.createElement("div");
+  messageDiv.classList.add("message");
+
+  if (isSender) {
+    messageDiv.classList.add("sender");
+  } else {
+    messageDiv.classList.add("receiver");
+  }
+
+  const meta = document.createElement("p");
+  meta.classList.add("meta");
+  meta.innerHTML = `${message.username} <span>${message.time}</span>`;
+
+  const text = document.createElement("p");
+  text.classList.add("text");
+
+  if (message.type === "file") {
+    const fileLink = document.createElement("a");
+    fileLink.href = message.file;
+    fileLink.target = "_blank";
+    fileLink.textContent = `Download ${message.filename}`;
+    text.appendChild(fileLink);
+  } else {
+    text.textContent = message.text;
+  }
+
+  messageDiv.appendChild(meta);
+  messageDiv.appendChild(text);
+
+  chatMessages.appendChild(messageDiv);
+}
+
 function outputRoomName(room) {
   roomName.innerText = room;
 }
 
-// Add users to DOM
 function outputUsers(users) {
   userList.innerHTML = "";
   users.forEach((user) => {
