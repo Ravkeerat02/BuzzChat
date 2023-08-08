@@ -1,8 +1,9 @@
-// server.js
 const path = require("path");
 const http = require("http");
 const express = require("express");
 const socketio = require("socket.io");
+const axios = require("axios");
+
 const { formatFileMessage, formatTextMessage } = require("./utils/messages");
 const {
   userJoin,
@@ -15,28 +16,37 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
-// Set static folder
 app.use(express.static(path.join(__dirname, "public")));
 
 const botName = "Admin";
 
-// Run when client connects
-io.on("connection", (socket) => {
-  socket.on("joinRoom", ({ username, room }) => {
-    const user = userJoin(socket.id, username, room);
+async function fetchMotivationalQuote() {
+  const apiUrl = "https://api.quotable.io/random";
+  try {
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+    return data.content;
+  } catch (error) {
+    console.error("Error fetching quote:", error);
+    return "Motivational quote not available at the moment.";
+  }
+}
 
+io.on("connection", (socket) => {
+  socket.on("joinRoom", async ({ username, room }) => {
+    const user = userJoin(socket.id, username, room);
     socket.join(user.room);
 
-    // Welcome current user
-    socket.emit(
-      "message",
-      formatTextMessage(
-        botName,
-        `Welcome to ${user.room} room  ${user.username}!`
-      )
-    );
+    try {
+      const motivationalQuote = await fetchMotivationalQuote();
+      const welcomeMessage = `Welcome to ${user.room} room ${user.username}!`;
+      socket.emit("message", formatTextMessage(botName, welcomeMessage));
+      socket.emit("message", formatTextMessage(botName, motivationalQuote));
+    } catch (error) {
+      const welcomeMessage = `Welcome to ${user.room} room ${user.username}!`;
+      socket.emit("message", formatTextMessage(botName, welcomeMessage));
+    }
 
-    // Broadcast when a user connects
     socket.broadcast
       .to(user.room)
       .emit(
@@ -44,14 +54,12 @@ io.on("connection", (socket) => {
         formatTextMessage(botName, `${user.username} has joined the chat`)
       );
 
-    // Send users and room info
     io.to(user.room).emit("roomUsers", {
       room: user.room,
       users: getRoomUsers(user.room),
     });
   });
 
-  // Listen for chatMessage
   socket.on("chatMessage", (msg) => {
     const user = getCurrentUsers(socket.id);
 
@@ -67,7 +75,6 @@ io.on("connection", (socket) => {
     }
   });
 
-  // Runs when client disconnects
   socket.on("disconnect", () => {
     const user = userLeave(socket.id);
 
@@ -77,7 +84,6 @@ io.on("connection", (socket) => {
         formatTextMessage(botName, `${user.username} has left the chat`)
       );
 
-      // Send users and room info
       io.to(user.room).emit("roomUsers", {
         room: user.room,
         users: getRoomUsers(user.room),
