@@ -93,7 +93,23 @@ function outputMessage(message, isSender) {
 }
 
 function outputRoomName(room) {
-  roomName.innerText = room;
+  const roomNameElement = document.getElementById("room-name");
+  roomNameElement.innerHTML = ""; // Clear the content of the room name element
+
+  // Create an icon element (Font Awesome icon)
+  const icon = document.createElement("i");
+  icon.classList.add("fas", "fa-laptop"); // Adjust the class based on your chosen icon
+
+  // Create a span element for the room name
+  const roomNameSpan = document.createElement("span");
+  roomNameSpan.textContent = room;
+
+  // Apply styles for spacing
+  icon.style.marginRight = "0.5rem"; // Adjust the spacing as needed
+
+  // Append the icon and room name to the room name element
+  roomNameElement.appendChild(icon);
+  roomNameElement.appendChild(roomNameSpan);
 }
 
 function outputUsers(users) {
