@@ -97,7 +97,9 @@ function outputRoomName(room) {
 }
 
 function outputUsers(users) {
+  const userList = document.getElementById("user-list");
   userList.innerHTML = "";
+
   users.forEach((user) => {
     const li = document.createElement("li");
     li.innerText = user.username;
