@@ -15,7 +15,7 @@ function formatFileMessage(username, file, filename) {
     file,
     filename,
     time: moment().format("h:mm a"),
-    type: "file",
+    type: ["file", "text"],
   };
 }
 

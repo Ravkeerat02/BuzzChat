@@ -3,6 +3,18 @@ const chatMessages = document.querySelector(".chat-messages"); // Make sure this
 const roomName = document.getElementById("room-name");
 const userList = document.getElementById("user-list");
 
+const roomIcons = {
+  Entertainment: "fas fa-film",
+  Photography: "fas fa-camera",
+  Sports: "fas fa-futbol",
+  Technology: "fas fa-microchip",
+  Gaming: "fas fa-gamepad",
+  LifeStyle: "fas fa-glass-cheers",
+  Automotive: "fas fa-car",
+  Music: "fas fa-music",
+  General: "fas fa-home",
+};
+
 const { username, room } = Qs.parse(location.search, {
   ignoreQueryPrefix: true,
 });
@@ -94,20 +106,19 @@ function outputMessage(message, isSender) {
 
 function outputRoomName(room) {
   const roomNameElement = document.getElementById("room-name");
-  roomNameElement.innerHTML = ""; // Clear the content of the room name element
+  roomNameElement.innerHTML = "";
 
-  // Create an icon element (Font Awesome icon)
   const icon = document.createElement("i");
-  icon.classList.add("fas", "fa-laptop"); // Adjust the class based on your chosen icon
+  icon.className = roomIcons.hasOwnProperty(room)
+    ? roomIcons[room]
+    : "fas fa-door-open";
 
-  // Create a span element for the room name
   const roomNameSpan = document.createElement("span");
   roomNameSpan.textContent = room;
 
   // Apply styles for spacing
   icon.style.marginRight = "0.5rem"; // Adjust the spacing as needed
 
-  // Append the icon and room name to the room name element
   roomNameElement.appendChild(icon);
   roomNameElement.appendChild(roomNameSpan);
 }

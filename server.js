@@ -3,7 +3,7 @@ const http = require("http");
 const express = require("express");
 const socketio = require("socket.io");
 const axios = require("axios");
-
+const moment = require("moment");
 const { formatFileMessage, formatTextMessage } = require("./utils/messages");
 const {
   userJoin,
@@ -21,11 +21,9 @@ app.use(express.static(path.join(__dirname, "public")));
 const botName = "Admin";
 
 async function fetchMotivationalQuote() {
-  const apiUrl = "https://api.quotable.io/random";
   try {
-    const response = await axios.get(apiUrl); // Using axios for GET request
-    const data = response.data;
-    return data.content;
+    const response = await axios.get("https://api.quotable.io/random");
+    return response.data.content;
   } catch (error) {
     console.error("Error fetching quote:", error);
     return "Motivational quote not available at the moment.";
@@ -37,41 +35,42 @@ io.on("connection", (socket) => {
     const user = userJoin(socket.id, username, room);
     socket.join(user.room);
 
-    try {
-      const motivationalQuote = await fetchMotivationalQuote();
-      const welcomeMessage = `Welcome to ${user.room} room ${user.username}!`;
-      socket.emit("message", formatTextMessage(botName, welcomeMessage));
-      socket.emit("message", formatTextMessage(botName, motivationalQuote));
-    } catch (error) {
-      const welcomeMessage = `Welcome to ${user.room} room ${user.username}!`;
-      socket.emit("message", formatTextMessage(botName, welcomeMessage));
-    }
+    const welcomeMessage = `Welcome to ${user.room} room ${user.username}!`;
+    const motivationalQuote = await fetchMotivationalQuote();
 
+    io.to(user.room).emit(
+      "message",
+      formatTextMessage(botName, welcomeMessage)
+    );
+    io.to(user.room).emit(
+      "message",
+      formatTextMessage(botName, motivationalQuote)
+    );
     socket.broadcast
       .to(user.room)
       .emit(
         "message",
         formatTextMessage(botName, `${user.username} has joined the chat`)
       );
-
     io.to(user.room).emit("roomUsers", {
       room: user.room,
       users: getRoomUsers(user.room),
     });
   });
 
-  socket.on("chatMessage", (msg) => {
+  socket.on("chatMessage", async (msg) => {
     const user = getCurrentUsers(socket.id);
 
-    if (user) {
-      if (msg.type === "file") {
-        io.to(user.room).emit(
-          "message",
-          formatFileMessage(user.username, msg.file, msg.filename)
-        );
-      } else {
-        io.to(user.room).emit("message", formatTextMessage(user.username, msg));
-      }
+    if (!user) return;
+
+    if (msg.type === "file") {
+      const fileData = await readFileAsDataURL(msg.file);
+      io.to(user.room).emit(
+        "message",
+        formatFileMessage(user.username, fileData, msg.filename)
+      );
+    } else {
+      io.to(user.room).emit("message", formatTextMessage(user.username, msg));
     }
   });
 
@@ -83,7 +82,6 @@ io.on("connection", (socket) => {
         "message",
         formatTextMessage(botName, `${user.username} has left the chat`)
       );
-
       io.to(user.room).emit("roomUsers", {
         room: user.room,
         users: getRoomUsers(user.room),
@@ -93,5 +91,14 @@ io.on("connection", (socket) => {
 });
 
 const PORT = process.env.PORT || 3000;
-
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+async function readFileAsDataURL(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      resolve(event.target.result);
+    };
+    reader.readAsDataURL(file);
+  });
+}
