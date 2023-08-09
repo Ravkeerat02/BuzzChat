@@ -23,9 +23,12 @@ Ready to experience the future of communication? Access BuzzChat now at [BuzzCha
 -->
 
 # Screenshot:
+![Updtaed ](https://github.com/Ravkeerat02/BuzzChat/blob/main/public/img/Screenshot%202023-08-09%20at%201.01.46%20AM.png)
 
 ![Home Screen](https://github.com/Ravkeerat02/BuzzChat/blob/main/public/img/Screenshot%202023-08-08%20at%201.10.10%20AM.png)
   
 ![Chat Page](https://github.com/Ravkeerat02/BuzzChat/blob/main/public/img/Screenshot%202023-08-08%20at%201.10.40%20AM.png)
+
+
   
 
