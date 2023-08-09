@@ -102,7 +102,22 @@ function outputUsers(users) {
 
   users.forEach((user) => {
     const li = document.createElement("li");
-    li.innerText = user.username;
+
+    //create an icon element
+    const icon = document.createElement("i");
+    icon.classList.add("fas", "fa-user");
+
+    //span element for users name
+    const userNameSpan = document.createElement("span", " ");
+    userNameSpan.textContent = user.username;
+
+    //applying styling
+    icon.style.marginRight = "0.5rem";
+
+    //add to the list item
+    li.appendChild(icon);
+    li.appendChild(userNameSpan);
+
     userList.appendChild(li);
   });
 }
