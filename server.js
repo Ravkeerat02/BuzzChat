@@ -4,6 +4,7 @@ const express = require("express");
 const socketio = require("socket.io");
 const axios = require("axios");
 const moment = require("moment");
+
 const { formatFileMessage, formatTextMessage } = require("./utils/messages");
 const {
   userJoin,
@@ -17,8 +18,6 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 app.use(express.static(path.join(__dirname, "public")));
-
-const botName = "Admin";
 
 async function fetchMotivationalQuote() {
   try {
@@ -35,22 +34,22 @@ io.on("connection", (socket) => {
     const user = userJoin(socket.id, username, room);
     socket.join(user.room);
 
-    const welcomeMessage = `Welcome to ${user.room} room ${user.username}!`;
+    const welcomeMessage = `Welcome to ${user.room} room ${user.username}`;
     const motivationalQuote = await fetchMotivationalQuote();
 
     io.to(user.room).emit(
       "message",
-      formatTextMessage(botName, welcomeMessage)
+      formatTextMessage(user.username, welcomeMessage)
     );
     io.to(user.room).emit(
       "message",
-      formatTextMessage(botName, motivationalQuote)
+      formatTextMessage(user.username, motivationalQuote)
     );
     socket.broadcast
       .to(user.room)
       .emit(
         "message",
-        formatTextMessage(botName, `${user.username} has joined the chat`)
+        formatTextMessage(user.username, `${user.username} has joined the chat`)
       );
     io.to(user.room).emit("roomUsers", {
       room: user.room,
@@ -88,6 +87,7 @@ io.on("connection", (socket) => {
       });
     }
   });
+  ``;
 });
 
 const PORT = process.env.PORT || 3000;

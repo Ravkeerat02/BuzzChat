@@ -76,9 +76,9 @@ function outputMessage(message, isSender) {
   messageDiv.classList.add("message");
 
   if (isSender) {
-    messageDiv.classList.add("sender");
+    messageDiv.classList.add("sender"); // Apply styling for sender's messages
   } else {
-    messageDiv.classList.add("receiver");
+    messageDiv.classList.add("receiver"); // Apply styling for receiver's messages
   }
 
   const meta = document.createElement("p");
