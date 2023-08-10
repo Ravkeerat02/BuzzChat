@@ -62,15 +62,7 @@ io.on("connection", (socket) => {
 
     if (!user) return;
 
-    if (msg.type === "file") {
-      const fileData = await readFileAsDataURL(msg.file);
-      io.to(user.room).emit(
-        "message",
-        formatFileMessage(user.username, fileData, msg.filename)
-      );
-    } else {
-      io.to(user.room).emit("message", formatTextMessage(user.username, msg));
-    }
+    io.to(user.room).emit("message", formatTextMessage(user.username, msg));
   });
 
   socket.on("disconnect", () => {
@@ -87,18 +79,7 @@ io.on("connection", (socket) => {
       });
     }
   });
-  ``;
 });
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-async function readFileAsDataURL(file) {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      resolve(event.target.result);
-    };
-    reader.readAsDataURL(file);
-  });
-}
