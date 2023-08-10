@@ -11,9 +11,9 @@ BuzzChat is a dynamic web application under construction, envisioned to offer a 
  
 # Features:
 
-- Joining Rooms: Easily create or join dedicated chat rooms tailored to specific topics, projects, or interests. Collaborate with like-minded individuals in a focused environment.
-- Sharing Messages: Experience the thrill of instant messaging with BuzzChat's real-time messaging feature. Engage in lively conversations, share ideas, and get instant feedback.
-- Sharing Files: Elevate your communication with the ability to share files seamlessly. Whether it's documents, images, or other file types, BuzzChat ensures easy file sharing within your chat rooms.
+- Joining Rooms
+- Sharing Messages
+- Sharing Files
 
 # User Experience:
 - Navigating BuzzChat is intuitive and user-friendly. Easily switch between rooms, send messages, and upload files with just a few clicks. The responsive design ensures a smooth experience across devices, making communication on the go a breeze.
@@ -27,7 +27,6 @@ Ready to experience the future of communication? Access BuzzChat now at [BuzzCha
 
 ![Home Screen](https://github.com/Ravkeerat02/BuzzChat/blob/main/public/img/Screenshot%202023-08-08%20at%201.10.10%20AM.png)
   
-![Chat Page](https://github.com/Ravkeerat02/BuzzChat/blob/main/public/img/Screenshot%202023-08-08%20at%201.10.40%20AM.png)
 
 
   
