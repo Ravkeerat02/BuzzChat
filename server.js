@@ -1,7 +1,6 @@
 const path = require("path");
 const http = require("http");
 const express = require("express");
-const socketio = require("socket.io");
 const axios = require("axios");
 const moment = require("moment");
 
@@ -15,7 +14,7 @@ const {
 
 const app = express();
 const server = http.createServer(app);
-const io = socketio(server);
+const io = require("socket.io")(server);
 
 const cors = require("cors");
 app.use(cors());
