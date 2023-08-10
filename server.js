@@ -17,6 +17,9 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
+const cors = require("cors");
+app.use(cors());
+
 app.use(express.static(path.join(__dirname, "public")));
 
 async function fetchMotivationalQuote() {
